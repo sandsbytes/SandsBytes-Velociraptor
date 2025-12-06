@@ -5,7 +5,9 @@ This library enable the Velociraptor users from integrating directly to SandsByt
 # Deployment
 
 1- First you need to please this library in a place where Velociraptor can execute (for example in Velociraptor main folder).
+
 2- Deploy the YAML artifact file `Admin.Events.SandsBytes.yaml`, (Go to View Artifact -> Add an Artifact, then copy/paste the content of `Admin.Events.SandsBytes.yaml`)
+
 3- Deploy server events (Go to Server Events -> Update Server Monitoring Table, Select `Admin.Events.SandsBytes`, then go to Configure Parameters tab, and the proper configuration then click Launch).
 
 
