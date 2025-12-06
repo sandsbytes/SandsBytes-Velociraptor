@@ -1,0 +1,633 @@
+{
+    "auth": {
+      "login": {
+        "path": "/auth/login",
+        "method": "POST"
+      },
+      "refresh": {
+        "path": "/auth/refresh",
+        "method": "POST"
+      },
+      "logout": {
+        "path": "/auth/logout",
+        "method": "DELETE"
+      }
+    },
+    "users": {
+      "list": {
+        "path": "/users",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/users/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/users/delete/{user_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/users/edit/{user_id}",
+        "method": "POST"
+      },
+      "assign_role": {
+        "path": "/users/assign_role",
+        "method": "POST"
+      },
+      "deassign_role": {
+        "path": "/users/deassign_role",
+        "method": "POST"
+      },
+      "create_contribution": {
+        "path": "/users/contributions/{user_id}/create",
+        "method": "PUT"
+      },
+      "delete_contribution": {
+        "path": "/users/contributions/{user_id}/delete/{contribution_id}",
+        "method": "DELETE"
+      },
+      "edit_contribution": {
+        "path": "/users/contributions/{user_id}/edit/{contribution_id}",
+        "method": "POST"
+      },
+      "create_skill": {
+        "path": "/users/skills/{user_id}/create",
+        "method": "PUT"
+      },
+      "delete_skill": {
+        "path": "/users/skills/{user_id}/delete/{skill_id}",
+        "method": "DELETE"
+      },
+      "edit_skill": {
+        "path": "/users/skills/{user_id}/edit/{skill_id}",
+        "method": "POST"
+      }
+    },
+    "roles": {
+      "list": {
+        "path": "/roles",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/roles/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/roles/delete/{role_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/roles/edit/{role_id}",
+        "method": "POST"
+      },
+      "grant_permission": {
+        "path": "/roles/grant_permission",
+        "method": "POST"
+      },
+      "revoke_permission": {
+        "path": "/roles/revoke_permission",
+        "method": "POST"
+      },
+      "permissions": {
+        "path": "/roles/permissions",
+        "method": "GET"
+      }
+    },
+    "cases": {
+      "list": {
+        "path": "/cases",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/delete/{case_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/edit/{case_id}",
+        "method": "POST"
+      },
+      "assign_user": {
+        "path": "/cases/assign_user/{case_id}",
+        "method": "POST"
+      },
+      "deassign_user": {
+        "path": "/cases/deassign_user/{case_id}",
+        "method": "POST"
+      },
+      "process": {
+        "path": "/cases/process/{case_id}",
+        "method": "POST"
+      },
+      "enrich": {
+        "path": "/cases/enrich/{case_id}",
+        "method": "POST"
+      }
+    },
+    "packages": {
+      "list": {
+        "path": "/cases/{case_id}/packages",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/packages/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/packages/delete/{package_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/packages/edit/{package_id}",
+        "method": "POST"
+      },
+      "mount_folders": {
+        "path": "/cases/{case_id}/packages/mount_folders",
+        "method": "GET"
+      },
+      "create_mount_folder": {
+        "path": "/cases/{case_id}/packages/create_mount_folder/{package_id}",
+        "method": "POST"
+      },
+      "delete_mount_folder": {
+        "path": "/cases/{case_id}/packages/delete_mount_folder/{package_id}",
+        "method": "DELETE"
+      },
+      "mount_folder": {
+        "path": "/cases/{case_id}/packages/mount_folder/{package_id}",
+        "method": "POST"
+      },
+      "unmount_folder": {
+        "path": "/cases/{case_id}/packages/unmount_folder/{package_id}",
+        "method": "POST"
+      },
+      "upload_file": {
+        "path": "/cases/{case_id}/packages/upload_file/{package_id}",
+        "method": "POST"
+      },
+      "download_file": {
+        "path": "/cases/{case_id}/packages/download_file",
+        "method": "POST"
+      },
+      "files": {
+        "path": "/cases/{case_id}/packages/files",
+        "method": "GET"
+      },
+      "delete_files": {
+        "path": "/cases/{case_id}/packages/files",
+        "method": "DELETE"
+      }
+    },
+    "evidences": {
+      "list": {
+        "path": "/cases/{case_id}/evidences",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/evidences/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/evidences/delete/{evidence_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/evidences/edit/{evidence_id}",
+        "method": "POST"
+      }
+    },
+    "requirements": {
+      "list": {
+        "path": "/cases/{case_id}/requirements",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/requirements/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/requirements/delete/{requirement_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/requirements/edit/{requirement_id}",
+        "method": "POST"
+      }
+    },
+    "findings": {
+      "list": {
+        "path": "/cases/{case_id}/findings",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/findings/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/findings/delete/{finding_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/findings/edit/{finding_id}",
+        "method": "POST"
+      }
+    },
+    "iocs": {
+      "list": {
+        "path": "/cases/{case_id}/iocs",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/iocs/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/iocs/delete/{ioc_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/iocs/edit/{ioc_id}",
+        "method": "POST"
+      }
+    },
+    "case_files": {
+      "list": {
+        "path": "/cases/{case_id}/files",
+        "method": "GET"
+      },
+      "download": {
+        "path": "/cases/{case_id}/files/download",
+        "method": "GET"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/files/delete",
+        "method": "DELETE"
+      }
+    },
+    "timelines": {
+      "list": {
+        "path": "/cases/{case_id}/timeline",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/timeline/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/timeline/delete/{timeline_event_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/timeline/edit/{timeline_event_id}",
+        "method": "POST"
+      }
+    },
+    "remediations": {
+      "list": {
+        "path": "/cases/{case_id}/remediations",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/remediations/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/remediations/delete/{remediation_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/remediations/edit/{remediation_id}",
+        "method": "POST"
+      }
+    },
+    "reports": {
+      "list": {
+        "path": "/cases/{case_id}/reports",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/reports/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/reports/delete/{report_id}",
+        "method": "DELETE"
+      },
+      "download": {
+        "path": "/cases/{case_id}/reports/download",
+        "method": "POST"
+      }
+    },
+    "tasks": {
+      "list": {
+        "path": "/cases/{case_id}/tasks",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/cases/{case_id}/tasks/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/cases/{case_id}/tasks/delete/{task_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/cases/{case_id}/tasks/edit/{task_id}",
+        "method": "POST"
+      }
+    },
+    "iocs_all": {
+      "list": {
+        "path": "/iocs",
+        "method": "GET"
+      }
+    },
+    "settings": {
+      "list": {
+        "path": "/settings",
+        "method": "GET"
+      },
+      "edit": {
+        "path": "/settings/edit/{section_name}/{setting_name}",
+        "method": "POST"
+      },
+      "system_health": {
+        "path": "/settings/system_health",
+        "method": "POST"
+      },
+      "system_config": {
+        "path": "/settings/system_config",
+        "method": "POST"
+      },
+      "fields": {
+        "path": "/settings/fields",
+        "method": "POST"
+      },
+      "fields_options": {
+        "path": "/settings/fields_options",
+        "method": "GET"
+      },
+      "edit_fields_options": {
+        "path": "/settings/edit/fields_options",
+        "method": "POST"
+      }
+    },
+    "templates": {
+      "list": {
+        "path": "/templates",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/templates/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/templates/delete/{template_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/templates/edit/{template_id}",
+        "method": "POST"
+      },
+      "download": {
+        "path": "/templates/download",
+        "method": "POST"
+      }
+    },
+    "parsers": {
+      "list": {
+        "path": "/parsers",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/parsers/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/parsers/delete/{parser_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/parsers/edit/{parser_id}",
+        "method": "POST"
+      },
+      "download": {
+        "path": "/parsers/download",
+        "method": "POST"
+      },
+      "upload": {
+        "path": "/parsers/upload",
+        "method": "POST"
+      }
+    },
+    "enrichers": {
+      "list": {
+        "path": "/enrichers",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/enrichers/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/enrichers/delete/{enricher_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/enrichers/edit/{enricher_id}",
+        "method": "POST"
+      },
+      "edit_order": {
+        "path": "/enrichers/edit_order",
+        "method": "POST"
+      },
+      "download": {
+        "path": "/enrichers/download",
+        "method": "POST"
+      }
+    },
+    "feeds": {
+      "list": {
+        "path": "/feeds",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/feeds/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/feeds/delete/{feed_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/feeds/edit/{feed_id}",
+        "method": "POST"
+      },
+      "records": {
+        "path": "/feeds/records",
+        "method": "GET"
+      },
+      "download": {
+        "path": "/feeds/download",
+        "method": "POST"
+      },
+      "sync_feeds": {
+        "path": "/feeds/sync_feeds",
+        "method": "POST"
+      }
+    },
+    "jobs": {
+      "list": {
+        "path": "/jobs",
+        "method": "GET"
+      }
+    },
+    "data": {
+      "search": {
+        "path": "/data/search",
+        "method": "GET"
+      },
+      "mapping_fields": {
+        "path": "/data/mapping_fields",
+        "method": "POST"
+      },
+      "update_tags": {
+        "path": "/data/update_tags",
+        "method": "POST"
+      },
+      "update_dashboard_widget": {
+        "path": "/data/update_dashboard_widget",
+        "method": "POST"
+      },
+      "create_dashboard_widget": {
+        "path": "/data/create_dashboard_widget",
+        "method": "PUT"
+      },
+      "delete_dashboard_widget": {
+        "path": "/data/delete_dashboard_widget/{name}",
+        "method": "DELETE"
+      },
+      "saved_searches": {
+        "path": "/data/saved_searches",
+        "method": "GET"
+      },
+      "create_saved_search": {
+        "path": "/data/saved_searches/create",
+        "method": "PUT"
+      },
+      "update_saved_search": {
+        "path": "/data/saved_searches/update/{saved_search_id}",
+        "method": "POST"
+      },
+      "delete_saved_search": {
+        "path": "/data/saved_searches/delete/{saved_search_id}",
+        "method": "DELETE"
+      }
+    },
+    "documents": {
+      "list": {
+        "path": "/documents",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/documents/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/documents/delete/{document_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/documents/edit/{document_id}",
+        "method": "POST"
+      },
+      "download": {
+        "path": "/documents/download",
+        "method": "POST"
+      },
+      "files": {
+        "path": "/documents/files",
+        "method": "GET"
+      },
+      "upload_file": {
+        "path": "/documents/file/upload/{document_id}",
+        "method": "POST"
+      },
+      "delete_file": {
+        "path": "/documents/file/delete/{document_id}",
+        "method": "DELETE"
+      },
+      "download_file": {
+        "path": "/documents/file/download/{document_id}",
+        "method": "POST"
+      }
+    },
+    "dashboards": {
+      "list": {
+        "path": "/dashboards",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/dashboards/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/dashboards/delete/{dashboard_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/dashboards/edit/{dashboard_id}",
+        "method": "POST"
+      },
+      "download": {
+        "path": "/dashboards/download",
+        "method": "POST"
+      }
+    },
+    "dashboard_widgets": {
+      "list": {
+        "path": "/dashboards/{dashboard_id}/widgets",
+        "method": "GET"
+      },
+      "create": {
+        "path": "/dashboards/{dashboard_id}/widgets/create",
+        "method": "PUT"
+      },
+      "delete": {
+        "path": "/dashboards/{dashboard_id}/widgets/delete/{widget_id}",
+        "method": "DELETE"
+      },
+      "edit": {
+        "path": "/dashboards/{dashboard_id}/widgets/edit/{widget_id}",
+        "method": "POST"
+      }
+    },
+    "dashboard_query": {
+      "query": {
+        "path": "/dashboards/query",
+        "method": "GET"
+      }
+    },
+    "store": {
+      "list_objects": {
+        "path": "/store/list/objects",
+        "method": "GET"
+      },
+      "install_objects": {
+        "path": "/store/install/objects/{object_type}",
+        "method": "POST"
+      },
+      "download_objects": {
+        "path": "/store/download/objects/{object_type}",
+        "method": "POST"
+      },
+      "import_objects": {
+        "path": "/store/import/objects/{object_type}",
+        "method": "POST"
+      }
+    }
+  }
+  

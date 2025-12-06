@@ -1,0 +1,25 @@
+# SandsBytes Velociraptor Connectors
+
+This library enable the Velociraptor users from integrating directly to SandsBytes solution for shipping and processs the Velociraptor results directly to specific cases in SandsBytes.
+
+# Deployment
+
+1- First you need to please this library in a place where Velociraptor can execute (for example in Velociraptor main folder).
+2- Deploy the YAML artifact file `Admin.Events.SandsBytes.yaml`, (Go to View Artifact -> Add an Artifact, then copy/paste the content of `Admin.Events.SandsBytes.yaml`)
+3- Deploy server events (Go to Server Events -> Update Server Monitoring Table, Select `Admin.Events.SandsBytes`, then go to Configure Parameters tab, and the proper configuration then click Launch).
+
+
+| Parameter                   | Description                                                         | Example                                              |
+|-----------------------------|---------------------------------------------------------------------|------------------------------------------------------|
+| **PythonScript**            | The Python script to run.                                           | `/velociraptor/SandsBytesConnector/SandsBytesShipper.py` |
+| **ArtifactsToWatch**        | The name of the artifact to monitor or watch for completion.        | `Windows.System.Pslist`                              |
+| **TemporaryDirectory**      | Temporary directory used to store intermediate files.               | `/velociraptor/SandsBytesConnector/tmp`              |
+| **SandsBytesURL**           | The URL of the SandsBytes server (API endpoint).                    | `https://192.168.237.134/api`                        |
+| **SandsBytesUsername**      | The username for authentication on the SandsBytes server.           | `admin`                                              |
+| **SandsBytesPassword**      | The password for authentication on the SandsBytes server.           | `Password@123`                                       |
+| **StartProcessingImmediately** | Start the processing for the artifact automatically after submission to SandsBytes. | `True` or `False`                                    |
+
+
+# Configure Client Label
+
+To be able to identify what cases the client results should be pushed to, you need to add label for the clients with the case number `case_<id>`

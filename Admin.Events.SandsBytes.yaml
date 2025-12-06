@@ -1,0 +1,97 @@
+name: Admin.Events.SandsBytes
+description: Runs external script to ship scan results to a FastAPI system after collection.
+type: SERVER_EVENT
+
+required_permissions:
+  - EXECVE
+
+parameters:
+  - name: PythonScript
+    description: |
+      The Python script to run.
+    default: /velociraptor/SandsBytesConnector/SandsBytesShipper.py
+
+  - name: ArtifactsToWatch
+    description: |
+      The name of the artifact to watch.
+    default: Windows.Registry.NTUser.Upload
+
+  - name: TemporaryDirectory
+    description: |
+      The temporary directory to use for the script.
+    default: /tmp
+
+  - name: SandsBytesURL
+    description: |
+      The URL of the SandsBytes server.
+    default: https://192.168.237.134/api
+  - name: SandsBytesUsername
+    description: |
+      The username for the SandsBytes server.
+    default: admin
+  - name: SandsBytesPassword
+    description: |
+      The password for the SandsBytes server.
+    default: Password@123
+    
+  - name: StartProcessingImmediately
+    description: |
+      Start the processing for the artifact automaticlly after submission to SandsBytes.
+    default: True
+    type: bool
+    
+   
+
+sources:
+  - query: |
+       LET find_hostname(ClientId) = SELECT os_info.hostname as Hostname, labels as Labels FROM clients() WHERE client_id = ClientId
+        
+       LET Completions = SELECT *
+         FROM watch_monitoring(artifact='System.Flow.Completion')
+         -- Try to match ANY artifact in flow against ANY artifact in ClientArtifactsToWatch.
+         -- Returns flows where there is at least one match in the completed flow.
+         WHERE Flow.artifacts_with_results =~ ArtifactsToWatch
+
+       -- Run Fluent Bit for each results file
+       LET PostProcess(Hostname, ClientId, FlowId, ArtifactName, ResultsPath, Labels) =
+         SELECT *
+         FROM execve(argv=["python3", PythonScript, "-a", ArtifactName, "-f", ResultsPath, "-t", TemporaryDirectory, "-c", Hostname, "-s", SandsBytesURL, "-u", SandsBytesUsername, "-p", SandsBytesPassword, "-l", join(array=Labels, sep=","), "-ap" , StartProcessingImmediately],
+                     -- Under normal circumstances length and line breaks are
+                     -- irrelevant since we aren't reading the data back.
+                     sep="\n",
+                     length=99999999)
+
+
+       LET GetResultsFile(ClientId, FlowId, ArtifactName) =
+         SELECT
+           file_store(path=Data.VFSPath) AS ResultsPath
+         FROM enumerate_flow(client_id=ClientId, flow_id=FlowId)
+         WHERE Type = "Result"
+         -- Match either named or unnamed sources
+         AND ( Data.VFSPath =~ ArtifactName
+           OR pathspec(parse=Data.VFSPath).Components[-3] + "/" +
+              pathspec(parse=Data.VFSPath).Components[-1] =~ ArtifactName )
+
+       SELECT *,
+              PostProcess(Hostname=find_hostname(ClientId=ClientId)[0].Hostname,
+                          ClientId=ClientId,
+                          FlowId=FlowId,
+                          ArtifactName=ArtifactName,
+                          ResultsPath=ResultsPath,
+                          Labels=find_hostname(ClientId=ClientId)[0].Labels)[0].Stdout AS RecordsProcessed
+       FROM foreach(row=Completions,
+                    query={ SELECT *,find_hostname(ClientId=ClientId)[0].Labels as Labels,
+                              GetResultsFile(ClientId=ClientId,
+                                             FlowId=FlowId,
+                                             ArtifactName=ArtifactName)[0].ResultsPath AS ResultsPath
+                            -- We need to check each result within each artifact to see if
+                            -- it is associated with the flow match that previously occurred.
+                            FROM foreach(row=Flow.artifacts_with_results,
+                                         query={ SELECT _value AS ArtifactName, ClientId, FlowId
+                                                 FROM scope()
+                                                 WHERE ArtifactName =~ ArtifactsToWatch
+                                               }
+                                        )
+                          },
+                    workers=10
+                   )
