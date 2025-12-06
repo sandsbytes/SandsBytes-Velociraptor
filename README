@@ -17,7 +17,7 @@ This library enable the Velociraptor users from integrating directly to SandsByt
 | **SandsBytesURL**           | The URL of the SandsBytes server (API endpoint).                    | `https://192.168.237.134/api`                        |
 | **SandsBytesUsername**      | The username for authentication on the SandsBytes server.           | `admin`                                              |
 | **SandsBytesPassword**      | The password for authentication on the SandsBytes server.           | `Password@123`                                       |
-| **StartProcessingImmediately** | Start the processing for the artifact automatically after submission to SandsBytes. | `True` or `False`                                    |
+| **StartProcessingImmediately** | Start the processing for the artifact automatically after submission to SandsBytes. | `True` or `False`                 |
 
 
 # Configure Client Label
