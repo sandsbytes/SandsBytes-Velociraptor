@@ -12,9 +12,14 @@ parameters:
     default: /velociraptor/SandsBytesConnector/SandsBytesShipper.py
 
   - name: ArtifactsToWatch
-    description: |
-      The name of the artifact to watch.
-    default: Windows.Registry.NTUser.Upload
+    type: artifactset 
+    description: List of artifacts to monitor
+    artifact_type: CLIENT
+    sources: TRUE
+    default: |
+      Windows.Detection.Amcache
+      Windows.System.Pslist
+      
 
   - name: TemporaryDirectory
     description: |
@@ -50,9 +55,29 @@ sources:
          FROM watch_monitoring(artifact='System.Flow.Completion')
          -- Try to match ANY artifact in flow against ANY artifact in ClientArtifactsToWatch.
          -- Returns flows where there is at least one match in the completed flow.
-         WHERE Flow.artifacts_with_results =~ ArtifactsToWatch
-
-       -- Run Fluent Bit for each results file
+         WHERE Flow.artifacts_with_results =~ join(array=ArtifactsToWatch.Artifact, sep="|")
+      
+      
+       LET GetResultsFile(ClientId, FlowId, ArtifactName) = 
+          SELECT 
+            tempfile(
+              extension=".json",
+              remove_last=TRUE,
+              data=serialize(
+                format="json",
+                item={
+                  SELECT * FROM source(
+                    client_id=ClientId,
+                    flow_id=FlowId,
+                    artifact=ArtifactName
+                  )
+                }
+              )
+            ) AS ResultsPath
+          FROM scope()
+          
+      
+       
        LET PostProcess(Hostname, ClientId, FlowId, ArtifactName, ResultsPath, Labels) =
          SELECT *
          FROM execve(argv=["python3", PythonScript, "-a", ArtifactName, "-f", ResultsPath, "-t", TemporaryDirectory, "-c", Hostname, "-s", SandsBytesURL, "-u", SandsBytesUsername, "-p", SandsBytesPassword, "-l", join(array=Labels, sep=","), "-ap" , StartProcessingImmediately],
@@ -62,36 +87,35 @@ sources:
                      length=99999999)
 
 
-       LET GetResultsFile(ClientId, FlowId, ArtifactName) =
-         SELECT
-           file_store(path=Data.VFSPath) AS ResultsPath
-         FROM enumerate_flow(client_id=ClientId, flow_id=FlowId)
-         WHERE Type = "Result"
-         -- Match either named or unnamed sources
-         AND ( Data.VFSPath =~ ArtifactName
-           OR pathspec(parse=Data.VFSPath).Components[-3] + "/" +
-              pathspec(parse=Data.VFSPath).Components[-1] =~ ArtifactName )
+        -- 3. Execution Loop
+        SELECT * FROM foreach(
+          row=Completions,
+          query={
+             SELECT * FROM foreach(
+               row={
+                  SELECT 
+                    _value AS TargetArtifact
+                  FROM foreach(row=Flow.artifacts_with_results)
+                  WHERE TargetArtifact =~ join(array=ArtifactsToWatch.Artifact, sep="|")
+               },
+               query={
+                  SELECT 
+                     TargetArtifact,
+                     PostProcess(
+                        Hostname=find_hostname(ClientId=ClientId)[0].Hostname,
+                        ClientId=ClientId,
+                        FlowId=FlowId,
+                        ArtifactName=TargetArtifact,
+                        ResultsPath=GetResultsFile(ClientId=ClientId, FlowId=FlowId, ArtifactName=TargetArtifact)[0].ResultsPath,
+                        Labels=find_hostname(ClientId=ClientId)[0].Labels
+                     )[0].Stdout AS RecordsProcessed
+                  FROM scope()
+               }
+             )
+          }
+        )
 
-       SELECT *,
-              PostProcess(Hostname=find_hostname(ClientId=ClientId)[0].Hostname,
-                          ClientId=ClientId,
-                          FlowId=FlowId,
-                          ArtifactName=ArtifactName,
-                          ResultsPath=ResultsPath,
-                          Labels=find_hostname(ClientId=ClientId)[0].Labels)[0].Stdout AS RecordsProcessed
-       FROM foreach(row=Completions,
-                    query={ SELECT *,find_hostname(ClientId=ClientId)[0].Labels as Labels,
-                              GetResultsFile(ClientId=ClientId,
-                                             FlowId=FlowId,
-                                             ArtifactName=ArtifactName)[0].ResultsPath AS ResultsPath
-                            -- We need to check each result within each artifact to see if
-                            -- it is associated with the flow match that previously occurred.
-                            FROM foreach(row=Flow.artifacts_with_results,
-                                         query={ SELECT _value AS ArtifactName, ClientId, FlowId
-                                                 FROM scope()
-                                                 WHERE ArtifactName =~ ArtifactsToWatch
-                                               }
-                                        )
-                          },
-                    workers=10
-                   )
+
+
+
+

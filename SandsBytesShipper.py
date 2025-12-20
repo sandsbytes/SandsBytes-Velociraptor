@@ -9,6 +9,7 @@ import argparse
 from sandsbytes_sdk.http_client import HTTPClient
 import zipfile
 import zlib
+import ijson
 
 
 import logging
@@ -21,6 +22,7 @@ for name in list(logging.Logger.manager.loggerDict):
 
 parsers_list = ["024d5499-5cd0-4897-8558-218d68639597"]
 
+# zip the directory
 def zipdir(src_dir, zip_file_path, exclude_patterns=None):
     exclude_patterns = exclude_patterns or []
 
@@ -36,15 +38,31 @@ def zipdir(src_dir, zip_file_path, exclude_patterns=None):
                 # Add file with relative path
                 z.write(file_path, os.path.relpath(file_path, src_dir))
 
-
+# rezip the zip file
 def rezip(original_zip, output_zip):
     with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(original_zip, arcname=original_zip.name)
 
+# check if the results file is compressed with zlib
 def is_zlib(path):
     with open(path, "rb") as f:
         data = f.read(2)
     return data.startswith(b'\x78')
+
+# convert the results file to jsonl format
+def convert_to_jsonl(input_path, output_path):
+    with open(input_path, 'rb') as f_in:
+        # Open the output file in write mode
+        with open(output_path, 'w', encoding='utf-8') as f_out:
+            # ijson.items(file, 'item') iterates through every object in the root array
+            parser = ijson.items(f_in, 'item')
+            
+            for entry in parser:
+                # Convert the individual dictionary to a single string and write it
+                json_line = json.dumps(entry)
+                f_out.write(json_line + '\n')
+                
+
 
 def compress_results(results_path: str, artifact_name: str, temporary_directory: str, hostname: str):
 
@@ -61,15 +79,16 @@ def compress_results(results_path: str, artifact_name: str, temporary_directory:
 
 
     # check if the destination_file is compressed with zlib, then decompress it to a temporary folder
-    if is_zlib(results_path):
-        with open(results_path, "rb") as f:
-            data = f.read()
-        decompressed_data = zlib.decompress(data)
-        with open(destination_file, "wb") as f:
-            f.write(decompressed_data)
-    else:
-        shutil.copy(results_path, destination_file)
+    # if is_zlib(results_path):
+    #     with open(results_path, "rb") as f:
+    #         data = f.read()
+    #     decompressed_data = zlib.decompress(data)
+    #     with open(destination_file, "wb") as f:
+    #         f.write(decompressed_data)
+    # else:
+    #     shutil.copy(results_path, destination_file)
 
+    convert_to_jsonl(results_path, destination_file)
 
 
     # Zip the temp folder
