@@ -8,6 +8,7 @@ from pathlib import Path
 import argparse
 from sandsbytes_sdk.http_client import HTTPClient
 import zipfile
+import zlib
 
 
 import logging
@@ -40,6 +41,11 @@ def rezip(original_zip, output_zip):
     with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as z:
         z.write(original_zip, arcname=original_zip.name)
 
+def is_zlib(path):
+    with open(path, "rb") as f:
+        data = f.read(2)
+    return data.startswith(b'\x78')
+
 def compress_results(results_path: str, artifact_name: str, temporary_directory: str, hostname: str):
 
     temp_dir_id = str(uuid.uuid4())
@@ -53,7 +59,18 @@ def compress_results(results_path: str, artifact_name: str, temporary_directory:
     # Copy the results file into the results folder as "{artifact_name}.json"
     destination_file = results_folder / f"{artifact_name}.json"
 
-    shutil.copy(results_path, destination_file)
+
+    # check if the destination_file is compressed with zlib, then decompress it to a temporary folder
+    if is_zlib(results_path):
+        with open(results_path, "rb") as f:
+            data = f.read()
+        decompressed_data = zlib.decompress(data)
+        with open(destination_file, "wb") as f:
+            f.write(decompressed_data)
+    else:
+        shutil.copy(results_path, destination_file)
+
+
 
     # Zip the temp folder
     zip_filename = Path(temporary_directory) / temp_dir_id / f"velociraptor-{hostname}.zip"
